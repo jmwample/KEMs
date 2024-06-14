@@ -39,6 +39,8 @@
 //!
 //! [RFC 9180]: https://www.rfc-editor.org/info/rfc9180
 
+use cfg_if::cfg_if;
+
 /// The inevitable utility module
 mod util;
 
@@ -53,9 +55,17 @@ mod crypto;
 /// Section 4.2.1. Conversion and Compression Algorithms, Compression and decompression
 mod compress;
 
-/// Section 4.2.1. Conversion and Compression Algorithms, Encoding and decoding
-mod encode;
-
+cfg_if! {
+    if #[cfg(feature = "elligantt")] {
+        /// Section 4.2.1. Conversion and Compression Algorithms
+        ///  + Fully randomized encoding and decoding
+        mod elligantt;
+        use elligantt as encode;
+    } else {
+        /// Section 4.2.1. Conversion and Compression Algorithms, Encoding and decoding
+        mod encode;
+    }
+}
 /// Section 5. The K-PKE Component Scheme
 mod pke;
 
