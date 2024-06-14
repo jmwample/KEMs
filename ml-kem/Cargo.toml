@@ -15,7 +15,7 @@ categories = ["cryptography", "no-std"]
 keywords = ["crypto", "kyber", "lattice", "post-quantum"]
 
 [features]
-default = ["std"]
+default = ["std", "elligantt"]
 std = ["sha3/std"]
 deterministic = [] # Expose deterministic generation and encapsulation functions
 elligantt = [] # Expose randomizing encapsulation key encoding and decoding functions

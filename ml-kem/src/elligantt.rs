@@ -1,3 +1,18 @@
+//!
+//! The public key the pair A and t. It is encoded as NTT(t) || rho, where rho is the seed for A.
+//!   - rho is obviously random.
+//!   - NTT(t) is indistinguishable from a random vector… but these values are
+//!     all modulo q, so you can recognize a Kyber public key because its values
+//!     are all below q.
+
+//! This can be fixed by encoding NTT(t) differently. This module implements
+//! one such alternate encoding / decoding scheme.
+//!
+//! This has two practical uses, (1) making public keys sent over the wire
+//! indistinguishable from random bytes, and (2) streamlining the process of
+//! implementating the `hash2curve` interface for ml-kem.
+//!
+
 use hybrid_array::{
     typenum::{Unsigned, U256},
     Array,
