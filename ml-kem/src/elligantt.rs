@@ -109,7 +109,9 @@ where
     type EncodedSize = D::EncodedPolynomialVectorSize;
 
     fn encode(&self) -> Array<u8, Self::EncodedSize> {
-        let polys = self.0.iter().map(|x| Encode::<D>::encode(x)).collect();
+        let polys: Array<EncodedPolynomial<D>, K> = self.0.iter().map(|x| Encode::<D>::encode(x)).collect();
+        #[cfg(feature = "debug")]
+        polys.iter().for_each(|x| println!("{x:?}"));
         <D as VectorEncodingSize<K>>::flatten(polys)
     }
 
