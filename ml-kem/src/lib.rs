@@ -86,6 +86,9 @@ use rand_core::CryptoRngCore;
 #[cfg(feature = "deterministic")]
 pub use util::B32;
 
+#[cfg(feature = "debug")]
+mod print;
+
 pub use param::{ArraySize, ParameterSet};
 
 /// An object that knows what size it is

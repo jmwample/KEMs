@@ -19,6 +19,7 @@ default = ["std", "elligantt"]
 std = ["sha3/std"]
 deterministic = [] # Expose deterministic generation and encapsulation functions
 elligantt = [] # Expose randomizing encapsulation key encoding and decoding functions
+debug = []
 
 [dependencies]
 kem = "0.3.0-pre.0"
