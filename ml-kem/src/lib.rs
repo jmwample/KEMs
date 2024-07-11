@@ -39,6 +39,8 @@
 //!
 //! [RFC 9180]: https://www.rfc-editor.org/info/rfc9180
 
+use cfg_if::cfg_if;
+
 /// The inevitable utility module
 mod util;
 
@@ -53,9 +55,17 @@ mod crypto;
 /// Section 4.2.1. Conversion and Compression Algorithms, Compression and decompression
 mod compress;
 
-/// Section 4.2.1. Conversion and Compression Algorithms, Encoding and decoding
-mod encode;
-
+cfg_if! {
+    if #[cfg(feature = "kemeleon")] {
+        /// Section 4.2.1. Conversion and Compression Algorithms
+        ///  + Fully randomized encoding and decoding
+        mod kemeleon;
+        use kemeleon as encode;
+    } else {
+        /// Section 4.2.1. Conversion and Compression Algorithms, Encoding and decoding
+        mod encode;
+    }
+}
 /// Section 5. The K-PKE Component Scheme
 mod pke;
 
@@ -75,6 +85,9 @@ use rand_core::CryptoRngCore;
 
 #[cfg(feature = "deterministic")]
 pub use util::B32;
+
+#[cfg(feature = "debug")]
+mod print;
 
 pub use param::{ArraySize, ParameterSet};
 

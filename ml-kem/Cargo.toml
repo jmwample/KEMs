@@ -15,15 +15,19 @@ categories = ["cryptography", "no-std"]
 keywords = ["crypto", "kyber", "lattice", "post-quantum"]
 
 [features]
-default = ["std"]
+default = ["std", "kemeleon"]
 std = ["sha3/std"]
 deterministic = [] # Expose deterministic generation and encapsulation functions
+kemeleon = ["dep:num-bigint"] # Expose randomizing encapsulation key encoding and decoding functions
+debug = []
 
 [dependencies]
 kem = "0.3.0-pre.0"
 hybrid-array = { version = "0.2.0-rc.8", features = ["extra-sizes"] }
 rand_core = "0.6.4"
 sha3 = { version = "0.10.8", default-features = false }
+cfg-if = "1.0.0"
+num-bigint = { version = "0.4.5", optional = true }
 
 [dev-dependencies]
 criterion = "0.5.1"
