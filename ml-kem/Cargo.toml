@@ -15,10 +15,10 @@ categories = ["cryptography", "no-std"]
 keywords = ["crypto", "kyber", "lattice", "post-quantum"]
 
 [features]
-default = ["std", "elligantt"]
+default = ["std", "kemeleon"]
 std = ["sha3/std"]
 deterministic = [] # Expose deterministic generation and encapsulation functions
-elligantt = [] # Expose randomizing encapsulation key encoding and decoding functions
+kemeleon = [] # Expose randomizing encapsulation key encoding and decoding functions
 debug = []
 
 [dependencies]

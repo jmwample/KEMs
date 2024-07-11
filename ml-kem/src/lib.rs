@@ -56,11 +56,11 @@ mod crypto;
 mod compress;
 
 cfg_if! {
-    if #[cfg(feature = "elligantt")] {
+    if #[cfg(feature = "kemeleon")] {
         /// Section 4.2.1. Conversion and Compression Algorithms
         ///  + Fully randomized encoding and decoding
-        mod elligantt;
-        use elligantt as encode;
+        mod kemeleon;
+        use kemeleon as encode;
     } else {
         /// Section 4.2.1. Conversion and Compression Algorithms, Encoding and decoding
         mod encode;

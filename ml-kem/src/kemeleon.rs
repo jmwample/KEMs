@@ -10,7 +10,15 @@
 //!
 //! This has two practical uses, (1) making public keys sent over the wire
 //! indistinguishable from random bytes, and (2) streamlining the process of
-//! implementating the `hash2curve` interface for ml-kem.
+//! implementating a `hash2curve` like interface for ml-kem.
+//!
+//! The first-sample success probability is the probability that the
+//! highest-order bit after accumulation is 0.
+//! For ML-KEM-512 with parameters 𝑞 = 3329, 𝑛 = 256, 𝑘 = 2, this
+//! probability is ≈ 0.56, for ML-KEM-768 with 𝑘 = 3 it is ≈ 0.83, and
+//! for ML-KEM-1024 with 𝑘 = 4 and 𝑑𝑣 = 5, it is ≈ 0.62. The advantage
+//! of any adversary against public key uniformity is 0 since the output
+//! covers the entire output space uniformly.
 //!
 
 use hybrid_array::{
