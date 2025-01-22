@@ -1,9 +1,7 @@
 [package]
 name = "x-wing"
-description = """
-Pure Rust implementation of the X-Wing Key-Encapsulation Mechanism
-"""
-version = "0.0.1-alpha"
+description = "Pure Rust implementation of the X-Wing Key Encapsulation Mechanism (draft 06)"
+version = "0.0.1-pre.1"
 edition = "2021"
 rust-version = "1.81"
 license = "Apache-2.0 OR MIT"
@@ -17,13 +15,6 @@ exclude = ["src/test-vectors.json"]
 [features]
 getrandom = ["rand_core/getrandom"]
 zeroize = ["dep:zeroize", "ml-kem/zeroize", "x25519-dalek/zeroize"]
-
-[lints.clippy]
-pedantic = "warn"                                 # Be pedantic by default
-similar_names = { level = "allow", priority = 1 } # So we can use the names as in the RFC
-
-[lints.rust]
-missing_docs = "deny" # Require all public interfaces to be documented
 
 [dependencies]
 rand_core = { version = "0.6", default-features = false }

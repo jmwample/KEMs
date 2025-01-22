@@ -5,6 +5,8 @@
     html_logo_url = "https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg",
     html_favicon_url = "https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg"
 )]
+#![deny(missing_docs)]
+#![warn(clippy::pedantic)]
 
 //! # Usage
 //!
@@ -14,16 +16,12 @@
 //! decapsulation key. X-Wing-KEM is a general-purpose hybrid post-quantum KEM, combining x25519 and ML-KEM-768.
 //!
 //! ```
-//! # use rand;
-//! # use kem::{Decapsulate, Encapsulate};
-//! let mut rng = rand::thread_rng();
+//! use kem::{Decapsulate, Encapsulate};
 //!
-//! let (sk, pk) = x_wing::generate_key_pair(&mut rng);
-//!
-//! let (ct, ss_sender) = pk.encapsulate(&mut rng).unwrap();
-//!
+//! let mut rng = &mut rand::rngs::OsRng;
+//! let (sk, pk) = x_wing::generate_key_pair(rng);
+//! let (ct, ss_sender) = pk.encapsulate(rng).unwrap();
 //! let ss_receiver = sk.decapsulate(&ct).unwrap();
-//!
 //! assert_eq!(ss_sender, ss_receiver);
 //! ```
 
@@ -37,7 +35,7 @@ use rand_core::CryptoRngCore;
 use rand_core::OsRng;
 use sha3::digest::core_api::XofReaderCoreWrapper;
 use sha3::digest::{ExtendableOutput, XofReader};
-use sha3::{Sha3_256, Shake128, Shake128ReaderCore};
+use sha3::{Sha3_256, Shake256, Shake256ReaderCore};
 use x25519_dalek::{x25519, X25519_BASEPOINT_BYTES};
 #[cfg(feature = "zeroize")]
 use zeroize::{Zeroize, ZeroizeOnDrop};
@@ -137,6 +135,7 @@ pub struct DecapsulationKey {
 impl Decapsulate<Ciphertext, SharedSecret> for DecapsulationKey {
     type Error = Infallible;
 
+    #[allow(clippy::similar_names)] // So we can use the names as in the RFC
     fn decapsulate(&self, ct: &Ciphertext) -> Result<SharedSecret, Self::Error> {
         let (sk_m, sk_x, _pk_m, pk_x) = self.expand_key();
         let ss_m = sk_m.decapsulate(&ct.ct_m)?;
@@ -182,7 +181,7 @@ impl DecapsulationKey {
         x25519_dalek::PublicKey,
     ) {
         use sha3::digest::Update;
-        let mut shaker = Shake128::default();
+        let mut shaker = Shake256::default();
         shaker.update(&self.sk);
         let mut expanded = shaker.finalize_xof();
 
@@ -266,15 +265,15 @@ fn combiner(
     use sha3::Digest;
 
     let mut hasher = Sha3_256::new();
-    hasher.update(X_WING_LABEL);
     hasher.update(ss_m);
     hasher.update(ss_x);
     hasher.update(ct_x);
     hasher.update(pk_x.as_bytes());
+    hasher.update(X_WING_LABEL);
     hasher.finalize().into()
 }
 
-fn read_from<const N: usize>(reader: &mut XofReaderCoreWrapper<Shake128ReaderCore>) -> [u8; N] {
+fn read_from<const N: usize>(reader: &mut XofReaderCoreWrapper<Shake256ReaderCore>) -> [u8; N] {
     let mut data = [0; N];
     reader.read(&mut data);
     data
@@ -313,7 +312,7 @@ mod tests {
         }
 
         fn fill_bytes(&mut self, dest: &mut [u8]) {
-            self.try_fill_bytes(dest).unwrap()
+            self.try_fill_bytes(dest).unwrap();
         }
 
         fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), rand_core::Error> {
@@ -346,7 +345,7 @@ mod tests {
 
     impl CryptoRng for SeedRng {}
 
-    /// Test with test vectors from: https://github.com/dconnolly/draft-connolly-cfrg-xwing-kem/blob/main/spec/test-vectors.json
+    /// Test with test vectors from: <https://github.com/dconnolly/draft-connolly-cfrg-xwing-kem/blob/main/spec/test-vectors.json>
     #[test]
     fn rfc_test_vectors() {
         let test_vectors =
@@ -398,7 +397,7 @@ mod tests {
         let sk_bytes = sk.as_bytes();
         let pk_bytes = pk.as_bytes();
 
-        let sk_b = DecapsulationKey::from(sk_bytes.clone());
+        let sk_b = DecapsulationKey::from(*sk_bytes);
         let pk_b = EncapsulationKey::from(&pk_bytes.clone());
 
         assert!(sk == sk_b);
